@@ -16,7 +16,8 @@ for tr in tree.xpath('//*[@id="curr_table"]/tbody/tr'):
     goldPrice = tr.xpath('td[2]/text()')
     print('date: '+ goldDate[0], 'price: '+ goldPrice[0])
     #print('date: ', goldDate, 'price: ', goldPrice)
-    #goldfile.write(goldDate, goldPrice)
-    goldfile.write("Date: %s , price: %s\n" % (goldDate[0], goldPrice[0]))
+    #goldfile.write("Date: %s , price: %s\n" % (goldDate[0], goldPrice[0]))
+    goldfile.write('%s:%s\n' % (goldDate[0], goldPrice[0]))
 
 goldfile.close()
+    
