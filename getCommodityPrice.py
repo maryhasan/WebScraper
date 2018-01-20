@@ -4,7 +4,6 @@ import calendar
 import datetime
 
 # Q3: Reads data from local files. Returns the mean and variance of the commodity price over the specified date range.
-# Maryam Hasan, 01-19-2018
 
 
 def getCommodityPrice(argv):
