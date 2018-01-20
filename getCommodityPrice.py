@@ -3,68 +3,76 @@ import numpy as np
 import calendar
 import datetime
 
+# Q3: Reads data from local files. Returns the mean and variance of the commodity price over the specified date range.
+# Maryam Hasan, 01-19-2018
+
 
 def getCommodityPrice(argv):
     if len(sys.argv) < 4:
         print ('please enter start date(yyyy-mm-dd), end date(yyyy-mm-dd) and Commodity type(gold or silver)')
         return
 
-    start=sys.argv[1]
-    end=sys.argv[2]
+    date1=sys.argv[1]
+    date2=sys.argv[2]
     commodity=sys.argv[3]
 
     #check the input date format
     try:
-        datetime.datetime.strptime(start, '%Y-%m-%d')
-        datetime.datetime.strptime(end, '%Y-%m-%d')
+        datetime.datetime.strptime(date1, '%Y-%m-%d')
+        datetime.datetime.strptime(date2, '%Y-%m-%d')
     except ValueError:
         raise ValueError("Incorrect date format, should be YYYY-MM-DD")
 
     # convert date formats
-    # start = '2018-01-14'
-    # end = '2018-01-03'
-    # commodity = 'gold'
-    year1, month1, day1 = start.split('-')
+    year1, month1, day1 = date1.split('-')
     month1 = calendar.month_abbr[int(month1)]
-    start = month1 + ' ' + day1 + ', ' + year1
-    print start
-    year1, month1, day1 = end.split('-')
+    date1 = month1 + ' ' + day1 + ', ' + year1
+    #print date1
+    year1, month1, day1 = date2.split('-')
     month1 = calendar.month_abbr[int(month1)]
-    end = month1 + ' ' + day1 + ', ' + year1
-    print end
+    date2 = month1 + ' ' + day1 + ', ' + year1
+    #print date2
 
     if commodity == 'gold':
         filename = "goldfile.csv"
     elif commodity == 'silver':
         filename = "silverfile.csv"
     else:
-        raise ValueError ('Incorrect commodity type, should be gold or silver')
+        raise ValueError ('Incorrect commodity type, should be gold or silver (case-sensitive)')
 
 
     goldfile = open(filename, "r")
 
+
     prices = dict()
-    flag = False
+    flag1 = False
+    flag2 = False
     for line in goldfile.readlines():
-        if start in line:
-            flag = True
-        if end in line:
+        if date2 in line:
+            flag2 = True    #we start counting
+
+        if flag2 == True:
+            if ':' in line:
+                key, value = line.split(':', 1)
+                prices[key] = float(value.replace(',', ''))
+
+        if date1 in line:
+            flag1=True   #we finish counting, and exit from the for loop
             if ':' in line:
                 key, value = line.split(':', 1)
                 prices[key] = float(value.replace(',', ''))
             break
-        if flag == True:
-            if ':' in line:
-                key, value = line.split(':', 1)
-                prices[key] = float(value.replace(',', ''))
+
+    #check if the input dates are out of range!
+    if flag1==False or flag2==False:
+        raise ValueError("The input dates are out of range!")
 
     #print prices.keys()
 
     stmean = np.mean(prices.values())
     stvar = np.var(prices.values())
 
-    print stmean
-    print stvar
+    print commodity, stmean, stvar
     # myvars[name.strip()] = float(var)    #while argv:
     # if argv[0][0] == '-':  # Found a "-name value" pair.
     #    opts[argv[0]] = argv[1]  # Add key and value to the dictionary.
